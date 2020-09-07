@@ -570,6 +570,9 @@ static void	mremote_clientchg(int add);
 static int	kidspad(u_char rxc, mousestatus_t *act);
 static int	gtco_digipad(u_char, mousestatus_t *);
 
+/* mveety change for z axis threshold */
+static int dzthresh = 0;
+
 int
 main(int argc, char *argv[])
 {
@@ -580,7 +583,7 @@ main(int argc, char *argv[])
     for (i = 0; i < MOUSE_MAXBUTTON; ++i)
 	mstate[i] = &bstate[i];
 
-    while ((c = getopt(argc, argv, "3A:C:DE:F:HI:L:PRS:T:VU:a:cdfhi:l:m:p:r:st:w:z:")) != -1)
+    while ((c = getopt(argc, argv, "3A:C:DE:F:HI:L:PRS:T:VU:a:cdfhi:l:m:p:r:st:w:z:Z:")) != -1)
 	switch(c) {
 
 	case '3':
@@ -702,6 +705,17 @@ main(int argc, char *argv[])
 	    }
 	    rodent.wmode = 1 << (i - 1);
 	    break;
+
+	/* mveety */
+	case 'Z':
+		i = atoi(optarg);
+		if (i < 0) {
+			warnx("invalid argumnet `%s'", optarg);
+			usage();
+		}
+		dzthresh = i;
+		dprintf(2, "dzthresh = %d\n", dzthresh);
+		break;
 
 	case 'z':
 	    if (strcmp(optarg, "x") == 0)
@@ -1025,6 +1039,8 @@ moused(void)
     int flags;
     int c;
     int i;
+    int dzi = 0;
+    int dzacc = 0;
 
     if ((rodent.cfd = open("/dev/consolectl", O_RDWR, 0)) == -1)
 	logerr(1, "cannot open /dev/consolectl");
@@ -1278,6 +1294,21 @@ moused(void)
 		    }
 		}
 	    }
+
+		if(dzthresh > 0){
+			dzi = action2.dz;
+			dzacc += dzi;
+			action2.dz = 0;
+			if(abs(dzacc) > dzthresh){
+				dprintf(2, "dzthresh reached\n");
+				dprintf(2, "dzacc = %d, dzthresh = %d\n", dzacc, dzthresh);
+				dzacc = 0;
+				if(dzi < 0)
+					action2.dz = -1;
+				else
+					action2.dz = 1;
+			}
+		}
 
 	    if (extioctl) {
 		/* Defer clicks until we aren't VirtualScroll'ing. */
