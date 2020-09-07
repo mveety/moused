@@ -714,7 +714,9 @@ main(int argc, char *argv[])
 			usage();
 		}
 		dzthresh = i;
+#if mvdebug
 		dprintf(2, "dzthresh = %d\n", dzthresh);
+#endif
 		break;
 
 	case 'z':
@@ -1300,8 +1302,10 @@ moused(void)
 			dzacc += dzi;
 			action2.dz = 0;
 			if(abs(dzacc) > dzthresh){
+#if mvdebug
 				dprintf(2, "dzthresh reached\n");
 				dprintf(2, "dzacc = %d, dzthresh = %d\n", dzacc, dzthresh);
+#endif
 				dzacc = 0;
 				if(dzi < 0)
 					action2.dz = -1;
