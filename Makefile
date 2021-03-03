@@ -1,11 +1,12 @@
-# $FreeBSD: releng/12.1/usr.sbin/moused/Makefile 275054 2014-11-25 16:57:27Z bapt $
 
-PROG=	moused
-MAN=	moused.8
+PROG=	mvmoused
+BINDIR= /usr/local/sbin
+SCRIPTSDIR= /usr/local/etc/rc.d
+SCRIPTS= mvmoused.rc
+SRCS= moused.c
+MAN=	mvmoused.8
 
-LIBADD=	m util
-
-#BINMODE=4555
-#PRECIOUSPROG=
+LDADD=	-lm -lutil
 
 .include <bsd.prog.mk>
+

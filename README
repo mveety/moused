@@ -6,3 +6,6 @@ more info.
 my command line is something like this:
 moused -w 4 -a 0.7 -A 1.2 -m 4=5 -Z 5 -r low -p /dev/ums0 -t auto
 
+to install:
+run make install as root
+
