@@ -31,10 +31,10 @@
 .\" $FreeBSD: releng/12.1/usr.sbin/moused/moused.8 267668 2014-06-20 09:57:27Z bapt $
 .\"
 .Dd May 15, 2008
-.Dt MOUSED 8
+.Dt MVMOUSED 8
 .Os
 .Sh NAME
-.Nm moused
+.Nm mvmoused
 .Nd pass mouse data to the console driver
 .Sh SYNOPSIS
 .Nm
@@ -47,6 +47,7 @@
 .Op Fl A Ar exp Ns Op , Ns Ar offset
 .Op Fl a Ar X Ns Op , Ns Ar Y
 .Op Fl C Ar threshold
+.Op Fl Z Ar threshold
 .Op Fl m Ar N=M
 .Op Fl w Ar N
 .Op Fl z Ar target
@@ -118,6 +119,8 @@ The user program which is reading mouse data
 via
 .Xr sysmouse 4
 will not be affected.
+.It Fl Z Ar threshold
+Reduce scrolling sensitivity.
 .It Fl D
 Lower DTR on the serial port.
 This option is valid only if
@@ -680,7 +683,7 @@ enable the mouse pointer in the current virtual console,
 .Pp
 start the mouse daemon in the foreground mode,
 .Pp
-.Dl "moused -f -p <selected_port> -t <selected_protocol>"
+.Dl "mvmoused -f -p <selected_port> -t <selected_protocol>"
 .Pp
 and see if the mouse pointer travels correctly
 according to the mouse movement.
@@ -731,7 +734,7 @@ utility
 UNIX-domain stream socket for X10 MouseRemote events
 .El
 .Sh EXAMPLES
-.Dl "moused -p /dev/cuau0 -i type"
+.Dl "mvmoused -p /dev/cuau0 -i type"
 .Pp
 Let the
 .Nm
@@ -740,7 +743,7 @@ utility determine the protocol type of the mouse at the serial port
 If successful, the command will print the type, otherwise it will say
 .Dq Li unknown .
 .Bd -literal -offset indent
-moused -p /dev/cuau0
+mvmoused -p /dev/cuau0
 vidcontrol -m on
 .Ed
 .Pp
@@ -751,7 +754,7 @@ port automatically, you can start the daemon without the
 .Fl t
 option and enable the mouse pointer in the text console as above.
 .Bd -literal -offset indent
-moused -p /dev/mouse -t microsoft
+mvmoused -p /dev/mouse -t microsoft
 vidcontrol -m on
 .Ed
 .Pp
@@ -763,27 +766,27 @@ is explicitly specified by the
 .Fl t
 option.
 .Pp
-.Dl "moused -p /dev/mouse -m 1=3 -m 3=1"
+.Dl "mvmoused -p /dev/mouse -m 1=3 -m 3=1"
 .Pp
 Assign the physical button 3 (right button) to the logical button 1
 (logical left) and the physical button 1 (left) to the logical
 button 3 (logical right).
 This will effectively swap the left and right buttons.
 .Pp
-.Dl "moused -p /dev/mouse -t intellimouse -z 4"
+.Dl "mvmoused -p /dev/mouse -t intellimouse -z 4"
 .Pp
 Report negative Z axis movement (i.e., mouse wheel) as the button 4 pressed
 and positive Z axis movement (i.e., mouse wheel) as the button 5 pressed.
 .Pp
 If you add
 .Pp
-.Dl "ALL ALL = NOPASSWD: /usr/bin/killall -USR1 moused"
+.Dl "ALL ALL = NOPASSWD: /usr/bin/killall -USR1 mvmoused"
 .Pp
 to your
 .Pa /usr/local/etc/sudoers
 file, and bind
 .Pp
-.Dl "killall -USR1 moused"
+.Dl "killall -USR1 mvmoused"
 .Pp
 to a key in your window manager, you can suspend mouse events on your laptop if
 you keep brushing over the mouse pad while typing.
@@ -796,7 +799,8 @@ you keep brushing over the mouse pad while typing.
 .Xr psm 4 ,
 .Xr screen 4 ,
 .Xr sysmouse 4 ,
-.Xr ums 4
+.Xr ums 4,
+.Xr moused 8
 .Sh STANDARDS
 The
 .Nm
@@ -824,6 +828,8 @@ This manual page was written by
 .An Mike Pritchard Aq Mt mpp@FreeBSD.org .
 The command and manual page have since been updated by
 .An Kazutaka Yokota Aq Mt yokota@FreeBSD.org .
+This version has some small changes by
+.An Matthew Veety Aq Mt mveety@gmail.com .
 .Sh CAVEATS
 Many pad devices behave as if the first (left) button were pressed if
 the user
